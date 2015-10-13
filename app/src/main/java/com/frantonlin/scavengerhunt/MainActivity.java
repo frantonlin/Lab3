@@ -1,16 +1,27 @@
 package com.frantonlin.scavengerhunt;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TitlePageFragment.onInstructionsListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Fragment titlePage = new TitlePageFragment();
+        Fragment instructions = new InstructionsFragment();
+
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.replace(R.id.container, titlePage);
+        transaction.commit();
     }
 
 
@@ -35,4 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void onInstructions(){
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, new InstructionsFragment())
+                .commit();
+    }
+
 }
