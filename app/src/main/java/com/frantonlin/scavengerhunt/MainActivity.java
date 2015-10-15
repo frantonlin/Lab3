@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity implements TitlePageFragment.onInstructionsListener{
+public class MainActivity extends AppCompatActivity implements TitlePageFragment.onInstructionsListener, InstructionsFragment.onClueListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,4 +53,9 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
                 .commit();
     }
 
+    public void onClue(){
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, new VideoClueFragment())
+                .commit();
+    }
 }
