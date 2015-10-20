@@ -16,15 +16,11 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/titleText"
-        android:id="@+id/textView"
-        android:typeface="sans"
-        android:textSize="40sp"
+        android:id="@+id/imageView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="56dp" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

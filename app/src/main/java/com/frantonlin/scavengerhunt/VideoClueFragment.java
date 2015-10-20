@@ -2,7 +2,7 @@ package com.frantonlin.scavengerhunt;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.media.session.MediaController;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.VideoView;
+import android.widget.MediaController;
 
 /**
  * Created by keenan on 10/13/15.
@@ -18,6 +19,9 @@ import android.widget.VideoView;
 
 public class VideoClueFragment extends Fragment {
 
+    String testURL = "https://s3.amazonaws.com/olin-mobile-proto/MVI_3140.3gp";
+
+    //AmazonS3 s3Client = new AmazonS3Client();
 
     public VideoClueFragment(){
 
@@ -27,28 +31,35 @@ public class VideoClueFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         return inflater.inflate(R.layout.clue, container, false);
+
+
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-//        String LINK = "type_here_the_link";
-//        setContentView(R.layout.mediaplayer);
-//        VideoView videoView = (VideoView) findViewById(R.id.video);
-//        MediaController mc = new MediaController(this);
-//        mc.setAnchorView(videoView);
-//        mc.setMediaPlayer(videoView);
-//        Uri video = Uri.parse(LINK);
-//        videoView.setMediaController(mc);
-//        videoView.setVideoURI(video);
-//        videoView.start();
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
+        Uri uri=Uri.parse(testURL);
+        VideoView videoView = (VideoView) view.findViewById(R.id.videoView);
+        MediaController controller = new MediaController(getActivity());
+        videoView.setMediaController(controller);
+        videoView.setVideoURI(uri);
+        videoView.start();
+
+
+//        Uri uri=Uri.parse(testURL);
+//        mMediaController = new MediaController(getActivity());
+//        mMediaController.setAnchorView(videoView);
+//        VideoView video=(VideoView)view.findViewById(R.id.videoView);
+//        video.setVideoURI(uri);
+//        video.start();
+
 
     }
 
