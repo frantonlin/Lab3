@@ -2,6 +2,7 @@ package com.frantonlin.scavengerhunt;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,8 +15,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Created by Franton on 10/6/15.
@@ -56,7 +69,6 @@ public class CameraActivity extends AppCompatActivity {
     public void dispatchTakePictureIntent(View view) {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
-        Log.d("CAMERA ACTIVITY", String.valueOf(takePictureIntent.resolveActivity(getPackageManager())));
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
@@ -78,12 +90,32 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras(); // TODO: Fix null pointer exception
-            // http://stackoverflow.com/questions/19042511/android-camera-failure-delivering-result-resultinfowho-null-request-0-resul
-            Log.d("PHOTO DATA", String.valueOf(data));
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView mImageView = new ImageView(this);
-            mImageView.setImageBitmap(imageBitmap);
+            Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+            ImageView mImageView = (ImageView) findViewById(R.id.image);
+            int nh = (int) ( imageBitmap.getHeight() * (460.0 / imageBitmap.getWidth()) );
+            Bitmap scaled = Bitmap.createScaledBitmap(imageBitmap,460,nh,true);
+            mImageView.setImageBitmap(scaled);
+
+//            AmazonS3 s3Client = new AmazonS3Client(new DefaultAWSCredentialsProviderChain());
+
+            AmazonS3 s3Client = new AmazonS3Client();
+            TransferUtility transferUtility = new TransferUtility(s3Client, getApplicationContext());
+
+            s3Client.setRegion(Region.getRegion(Regions.US_EAST_1));
+            File fileToUpload = new File(mCurrentPhotoPath);
+            UUID uid = UUID.fromString("6f34f25e-0b0d-4426-8ece-a8b3f27f4b63");
+            String imageName = uid.randomUUID() + ".jpg";
+
+            TransferObserver observer = transferUtility.upload(
+                    "olin-mobile-proto",     /* The bucket to upload to */
+                    imageName,    /* The key for the uploaded object */
+                    fileToUpload        /* The file where the data to upload exists */
+            );
+
+            //(Replace "MY-BUCKET" with your S3 bucket name, and "MY-OBJECT-KEY" with whatever you would like to name the file in S3)
+//            PutObjectRequest putRequest = new PutObjectRequest("olin-mobile-proto", imageName, fileToUpload).withCannedAcl(CannedAccessControlList.PublicRead);
+//            PutObjectResult putResponse = s3Client.putObject(putRequest);
+            Log.d("PHOTO URL", "https://olin-mobile-proto.s3.amazonaws.com/"+imageName);
         }
     }
 
@@ -91,19 +123,17 @@ public class CameraActivity extends AppCompatActivity {
         // Create an image file name
 //        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "clue_" + number + "_photo";
-        File storageDir = Environment.getExternalStorageDirectory();
+//        File storageDir = Environment.getExternalStorageDirectory();
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 //        File storageDir = ContextCompat.getExternalCacheDirs();
-        Log.d("STORAGE DIRECTORY", String.valueOf(storageDir));
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         ); // DOES NOT WORK IN EMULATOR
 
-        Log.d("PHOTO PATH", image.getAbsolutePath());
-
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
