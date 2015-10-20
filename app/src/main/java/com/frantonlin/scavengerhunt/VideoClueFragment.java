@@ -1,8 +1,6 @@
 package com.frantonlin.scavengerhunt;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,8 +19,6 @@ public class VideoClueFragment extends Fragment {
 
     String testURL = "https://s3.amazonaws.com/olin-mobile-proto/MVI_3140.3gp";
 
-    //AmazonS3 s3Client = new AmazonS3Client();
-
     public VideoClueFragment(){
 
     }
@@ -31,9 +27,6 @@ public class VideoClueFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         return inflater.inflate(R.layout.clue, container, false);
-
-
-
     }
 
     @Override
@@ -51,15 +44,6 @@ public class VideoClueFragment extends Fragment {
         videoView.setMediaController(controller);
         videoView.setVideoURI(uri);
         videoView.start();
-
-
-//        Uri uri=Uri.parse(testURL);
-//        mMediaController = new MediaController(getActivity());
-//        mMediaController.setAnchorView(videoView);
-//        VideoView video=(VideoView)view.findViewById(R.id.videoView);
-//        video.setVideoURI(uri);
-//        video.start();
-
 
     }
 

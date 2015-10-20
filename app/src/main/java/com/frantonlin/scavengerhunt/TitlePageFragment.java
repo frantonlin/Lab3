@@ -51,7 +51,6 @@ public class TitlePageFragment extends Fragment {
 
     }
 
-
     public interface onInstructionsListener {
         public void onInstructions();
     }

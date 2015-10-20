@@ -28,7 +28,6 @@ public class InstructionsFragment extends Fragment{
         mClueListener = (onClueListener) activity;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         return inflater.inflate(R.layout.instructions, container, false);
