@@ -32,12 +32,6 @@ public class TitlePageFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
         letsGo = (Button)view.findViewById(R.id.button);
@@ -48,7 +42,6 @@ public class TitlePageFragment extends Fragment {
                 mInstructionsListener.onInstructions();
             }
         });
-
     }
 
     public interface onInstructionsListener {

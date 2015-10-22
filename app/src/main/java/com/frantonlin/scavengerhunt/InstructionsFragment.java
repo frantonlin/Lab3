@@ -34,12 +34,6 @@ public class InstructionsFragment extends Fragment{
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
         ready = (Button)view.findViewById(R.id.button2);
