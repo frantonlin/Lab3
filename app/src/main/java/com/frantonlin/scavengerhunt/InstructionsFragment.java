@@ -1,5 +1,6 @@
 package com.frantonlin.scavengerhunt;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -22,7 +23,7 @@ public class InstructionsFragment extends Fragment{
     }
 
     @Override
-    public void onAttach(Context activity)
+    public void onAttach(Activity activity)
     {
         super.onAttach(activity);
         mClueListener = (onClueListener) activity;

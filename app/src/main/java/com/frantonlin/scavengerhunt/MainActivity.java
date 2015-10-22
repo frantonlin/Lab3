@@ -3,17 +3,21 @@ package com.frantonlin.scavengerhunt;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity implements TitlePageFragment.onInstructionsListener, InstructionsFragment.onClueListener{
+public class MainActivity extends AppCompatActivity implements TitlePageFragment.onInstructionsListener, InstructionsFragment.onClueListener, VideoClueFragment.onTakePhotoListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        Intent intent = new Intent(this, CameraActivity.class);
+//        startActivity(intent);
 
         Fragment titlePage = new TitlePageFragment();
         Fragment instructions = new InstructionsFragment();
@@ -51,5 +55,10 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, new VideoClueFragment())
                 .commit();
+    }
+
+    public void takePhoto(){
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivity(intent);
     }
 }
