@@ -35,17 +35,27 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         transaction.commit();
 
         httpHandler = new HTTPHandler(this);
-        httpHandler.getInfo(new InfoCallback() {
+//        httpHandler.getInfo(new InfoCallback() {
+//            @Override
+//            public void callback(boolean success, HashMap<String, String> clueInfo) {
+//                if (success) {
+//                    Log.d("Success", Boolean.toString(success));
+//                    Log.d("MainActivity", String.valueOf(clueInfo));
+//                } else {
+//                    Log.d("Failure", Boolean.toString(success));
+//                }
+//            }
+//        }, 1);
+        httpHandler.postInfo(new PostCallback() {
             @Override
-            public void callback(boolean success, HashMap<String, String> clueInfo) {
+            public void callback(boolean success) {
                 if (success) {
                     Log.d("Success", Boolean.toString(success));
-                    Log.d("MainActivity", String.valueOf(clueInfo));
                 } else {
                     Log.d("Failure", Boolean.toString(success));
                 }
             }
-        }, 1);
+        }, "testKey", "testLocation");
     }
 
     @Override

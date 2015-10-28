@@ -3,19 +3,21 @@ package com.frantonlin.scavengerhunt;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Handles the HTTP requests
@@ -23,6 +25,7 @@ import java.util.HashMap;
  */
 public class HTTPHandler {
 
+    public static final String APPID = "olinscavenge";
     // The request queue for Volley
     public RequestQueue queue;
 
@@ -81,7 +84,49 @@ public class HTTPHandler {
                 }
         );
 
-        request.addMarker("search");
+        queue.add(request);
+    }
+
+    public void postInfo(final PostCallback callback, String imageKey, String imageNumber) {
+        String url = "http://45.55.65.113/userdata/"+APPID;
+
+        final JSONObject postObject = new JSONObject();
+        try {
+            postObject.put("imageKey", imageKey);
+            postObject.put("imageLocation", imageNumber);
+        } catch (JSONException e) {
+            callback.callback(false);
+        }
+
+        StringRequest request = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // we got a response, success!
+                        callback.callback(true);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // we had an error, failure!
+                        callback.callback(false);
+                    }
+                }
+        ){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return postObject.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+
         queue.add(request);
     }
 }
