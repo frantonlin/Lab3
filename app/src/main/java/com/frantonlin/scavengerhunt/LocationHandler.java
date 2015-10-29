@@ -7,17 +7,16 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
-//import com.google.android.gms.location.LocationRequest;
 
 /**
  * Created by keenan on 10/27/15.
  */
+
 public class LocationHandler {
 
     public static final String TAG = LocationHandler.class.getSimpleName();
     private LocationCallback mLocationCallback;
     private LocationManager mLocationManager;
-//    private LocationRequest mLocationRequest;
 
     private double latitude;
     private double longitude;
@@ -34,11 +33,6 @@ public class LocationHandler {
 
             Log.e("ERROR: ", ex.getMessage());
         }
-
-//        mLocationRequest = LocationRequest.create()
-//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-//                .setInterval(4 * 1000)         // 4 seconds, in milliseconds
-//                .setFastestInterval(3 * 1000); // 3 seconds, in milliseconds
     }
 
     private LocationListener locationListener = new LocationListener() {

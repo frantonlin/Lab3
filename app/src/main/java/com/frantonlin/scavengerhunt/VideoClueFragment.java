@@ -4,8 +4,10 @@ import android.app.Fragment;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +25,10 @@ public class VideoClueFragment extends Fragment {
 
     String testURL = "https://s3.amazonaws.com/olin-mobile-proto/MVI_3140.3gp";
     public LocationHandler locationHandler;
+    LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
     TextView txtLat;
     Button checkLocationButton;
+    Location location;
 
     public VideoClueFragment(){
 
@@ -47,12 +51,18 @@ public class VideoClueFragment extends Fragment {
         checkLocationButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                LocationHandler handler = new LocationHandler(getActivity(), new LocationCallback() {
-                    @Override
-                    public void callback(Location location) {
+                MyLocationListener handler = new MyLocationListener();
+                try {
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, handler);
+                } catch (SecurityException ex){
+                    Log.e("ERROR: ", ex.getMessage());
+                }
+//                txtLat = (TextView) view.findViewById(R.id.textView);
+//                txtLat.setText("Latitude:" + handler.getLatitude() + ", Longitude:" + handler.getLongitude());
 
-                    }
-                });
+
+
+
             }
         });
 
@@ -64,10 +74,6 @@ public class VideoClueFragment extends Fragment {
 
             }
         });
-
-//        txtLat = (TextView) view.findViewById(R.id.textView);
-//        txtLat.setText("Latitude:" + locationHandler.getLatitude() + ", Longitude:" + locationHandler.getLongitude());
-
 
         Uri uri=Uri.parse(testURL);
         VideoView videoView = (VideoView) view.findViewById(R.id.videoView);
