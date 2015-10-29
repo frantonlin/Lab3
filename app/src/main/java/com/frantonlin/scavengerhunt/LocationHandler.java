@@ -12,8 +12,6 @@ import android.util.Log;
  */
 public class LocationHandler {
 
-    public double latitude;
-    public double longitude;
     private LocationCallback callback;
     LocationListener locationListener;
     LocationManager locationManager;

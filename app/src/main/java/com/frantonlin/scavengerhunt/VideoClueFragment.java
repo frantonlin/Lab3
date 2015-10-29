@@ -82,9 +82,15 @@ public class VideoClueFragment extends Fragment {
                     public void onLocationChanged(Location location) {
                         Log.d(TAG, "GPS: Latitude: " + String.valueOf(location.getLatitude()) + ", Longitude: " + String.valueOf(location.getLongitude()));
                     }
-                    public void onStatusChanged(String provider, int status, Bundle extras) {}
-                    public void onProviderEnabled(String provider) {}
-                    public void onProviderDisabled(String provider) {}
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                    }
+                    public void onProviderEnabled(String provider) {
+
+                    }
+                    public void onProviderDisabled(String provider) {
+
+                    }
                 };
                 try {
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
