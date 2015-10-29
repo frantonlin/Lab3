@@ -16,6 +16,13 @@
         android:layout_above="@+id/videoView"
         android:id="@+id/testButton"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CHECK"
+        android:layout_below="@+id/videoView"
+        android:id="@+id/checkButton"/>
+
 
     <VideoView
         android:id="@+id/videoView"
@@ -24,5 +31,5 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        </VideoView>
+    </VideoView>
 </RelativeLayout>
