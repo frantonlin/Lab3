@@ -32,6 +32,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity implements TitlePageFragment.onInstructionsListener, InstructionsFragment.onClueListener{
 
     static final int REQUEST_TAKE_PHOTO = 1;
+    static final String PREFS_NAME = "OlinScavengePrefs";
     private String mCurrentPhotoPath;
     private int clueNum;
     private int numClues;
@@ -43,20 +44,22 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        prefs = this.getPreferences(MODE_PRIVATE);
+        prefs = getSharedPreferences(PREFS_NAME, 0);
         clueNum = prefs.getInt("clueNum", 0);
+        Log.d("TESTING", String.valueOf(clueNum));
         if(clueNum == 0) {
-            clueNum = 1;
-            prefs.edit().putInt("clueNum", 1);
-            prefs.edit().apply();
+            incrementClueNum();
+            Fragment titlePage = new TitlePageFragment();
+
+            FragmentManager fm = getFragmentManager();
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.replace(R.id.container, titlePage);
+            transaction.commit();
+        } else if(clueNum == 1) {
+            onInstructions();
+        } else {
+            onClue();
         }
-
-        Fragment titlePage = new TitlePageFragment();
-
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.container, titlePage);
-        transaction.commit();
 
         httpHandler = new HTTPHandler(this);
     }
@@ -111,9 +114,9 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
      */
     public void incrementClueNum() {
         clueNum++;
-        prefs = this.getPreferences(MODE_PRIVATE);
-        prefs.edit().putInt("clueNum", clueNum);
-        prefs.edit().apply();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("clueNum", clueNum);
+        editor.apply();
     }
 
     public void nextClue() {
