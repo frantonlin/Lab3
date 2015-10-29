@@ -48,7 +48,7 @@ public class VideoClueFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
-        Button takePhoto = (Button)view.findViewById(R.id.testButton);
+        Button takePhoto = (Button)view.findViewById(R.id.checkPos);
 
         takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
