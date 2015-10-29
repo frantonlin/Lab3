@@ -6,4 +6,6 @@
     <string name="titleText">Scavenger Hunt!</string>
     <string name="ready">Ready!</string>
     <string name="checkPos">Check My Position</string>
+    <string name="finishText">CONGRATS!\nYOU\'RE DONE!</string>
+    <string name="restartButton">Play Again?</string>
 </resources>
