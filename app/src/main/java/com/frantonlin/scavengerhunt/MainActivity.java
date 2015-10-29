@@ -30,12 +30,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+import android.widget.GridView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MainActivity extends AppCompatActivity implements TitlePageFragment.onInstructionsListener, InstructionsFragment.onClueListener, VideoClueFragment.onTakePhotoListener{
 
     static final int REQUEST_TAKE_PHOTO = 1;
     private String mCurrentPhotoPath;
     private int clueNum;
     SharedPreferences prefs;
+    private HTTPHandler httpHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,30 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.container, titlePage);
         transaction.commit();
+
+        httpHandler = new HTTPHandler(this);
+//        httpHandler.getInfo(new InfoCallback() {
+//            @Override
+//            public void callback(boolean success, HashMap<String, String> clueInfo) {
+//                if (success) {
+//                    Log.d("Success", Boolean.toString(success));
+//                    Log.d("MainActivity", String.valueOf(clueInfo));
+//                } else {
+//                    Log.d("Failure", Boolean.toString(success));
+//                }
+//            }
+//        }, 1);
+
+//        httpHandler.postInfo(new PostCallback() {
+//            @Override
+//            public void callback(boolean success) {
+//                if (success) {
+//                    Log.d("Success", Boolean.toString(success));
+//                } else {
+//                    Log.d("Failure", Boolean.toString(success));
+//                }
+//            }
+//        }, "testKey", "testLocation");
     }
 
     @Override
