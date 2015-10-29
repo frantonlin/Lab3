@@ -15,14 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.VideoView;
 import android.widget.MediaController;
 
 /**
  * Created by keenan on 10/13/15.
  */
-
 
 public class VideoClueFragment extends Fragment {
 
@@ -39,8 +37,6 @@ public class VideoClueFragment extends Fragment {
     Location currentLoc;
 
     private int clueNumber;  //WILL BE IN SHARED PREFERENCES?
-
-
 
     public VideoClueFragment(){
 
@@ -79,7 +75,7 @@ public class VideoClueFragment extends Fragment {
         final Button checkLocationButton = (Button) view.findViewById(R.id.checkButton);
 
 
-        // When user clicks 'CHECK' button,
+        // When user clicks 'CHECK' button, check if they are within range by locating their GPS
         checkLocationButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -100,35 +96,31 @@ public class VideoClueFragment extends Fragment {
                     }
                 };
                 try {
-                    //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener); USE IF WANT LIVE UPDATING LOCATION STATUS
                     currentLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     checkLocation(currentLoc);
                     Log.d(TAG, "GPS: Latitude: " + String.valueOf(currentLoc.getLatitude()) + ", Longitude: " + String.valueOf(currentLoc.getLongitude()));
                 } catch (SecurityException ex) {
                     Log.e("ERROR", ex.getMessage());
                 }
-
-
-
             }
         });
 
-
+        //Pares the video URL and play in the view, also include a media controller
         Uri uri=Uri.parse(testURL);
         VideoView videoView = (VideoView) view.findViewById(R.id.videoView);
         MediaController controller = new MediaController(getActivity());
         videoView.setMediaController(controller);
         videoView.setVideoURI(uri);
         videoView.start();
-
     }
 
     public void checkLocation(Location loc)
     {
+        // Check for distance to the target given a specific latitude and longitude threshold of being within range
         if (Math.abs(loc.getLatitude() -  target_latitude) < target_treshhold && (Math.abs(loc.getLongitude() - target_longitude) < target_treshhold))
         {
             clueNumber += 1;
-
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
             // set title
@@ -142,7 +134,6 @@ public class VideoClueFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int id) {
 
                             // GO TO CAMERA INTENT THEN NEXT CLUE
-
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -179,10 +170,10 @@ public class VideoClueFragment extends Fragment {
 
             // show it
             alertDialog.show();
-
         }
     }
 
+    // On Success, go to take the photo before the next clue
     public interface onTakePhotoListener
     {
         public void takePhoto();

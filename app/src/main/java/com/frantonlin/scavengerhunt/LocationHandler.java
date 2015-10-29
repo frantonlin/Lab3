@@ -12,36 +12,67 @@ import android.util.Log;
  */
 public class LocationHandler {
 
-    private LocationCallback callback;
     LocationListener locationListener;
     LocationManager locationManager;
+    Location currentLoc;
     public static final String TAG = LocationHandler.class.getSimpleName();
 
-    public LocationHandler(Context context, final LocationCallback callback1) {
-        locationManager = (LocationManager) context.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        callback = callback1;
-        Log.d(TAG, "callback");
-        locationListener = new LocationListener()
-        {
+    public LocationHandler(Location location, Context context) {
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
             @Override
-            public void onLocationChanged(Location location)
-            {
-                callback.callback(location);
+            public void onLocationChanged(Location location) {
+                Log.d(TAG, "GPS: Latitude: " + String.valueOf(location.getLatitude()) + ", Longitude: " + String.valueOf(location.getLongitude()));
             }
+
             public void onStatusChanged(String provider, int status, Bundle extras) {
 
             }
+
             public void onProviderEnabled(String provider) {
 
             }
+
             public void onProviderDisabled(String provider) {
 
             }
         };
         try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+            currentLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            Log.d(TAG, "GPS: Latitude: " + String.valueOf(currentLoc.getLatitude()) + ", Longitude: " + String.valueOf(currentLoc.getLongitude()));
         } catch (SecurityException ex) {
             Log.e("SECURITY_ERROR", ex.getMessage());
         }
+
     }
 }
+
+//    locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+//    locationListener = new LocationListener() {
+//        public void onLocationChanged(Location location) {
+//            Log.d(TAG, "GPS: Latitude: " + String.valueOf(location.getLatitude()) + ", Longitude: " + String.valueOf(location.getLongitude()));
+//        }
+//    public void onStatusChanged(String provider, int status, Bundle extras) {
+//
+//    }
+//    public void onProviderEnabled(String provider) {
+//
+//    }
+//    public void onProviderDisabled(String provider) {
+//
+//    }
+//};
+//try {
+//        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+//        currentLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//        checkLocation(currentLoc);
+//        Log.d(TAG, "GPS: Latitude: " + String.valueOf(currentLoc.getLatitude()) + ", Longitude: " + String.valueOf(currentLoc.getLongitude()));
+//        } catch (SecurityException ex) {
+//        Log.e("ERROR", ex.getMessage());
+//        }
+
+
+
+
+
+
