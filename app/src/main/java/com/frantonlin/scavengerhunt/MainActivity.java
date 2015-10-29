@@ -165,6 +165,13 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         }
     }
 
+    /**
+     * Make sure request is the same one that was requested and the result code is ok! Also override
+     * the callback in httphandler
+     * @param requestCode The integer request code originally supplied to startActivityForResult(), allowing you to identify who this result came from.
+     * @param resultCode The integer result code returned by the child activity through its setResult().
+     * @param data An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
@@ -178,8 +185,8 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
 
             TransferObserver observer = transferUtility.upload(
                     "olin-mobile-proto",     /* The bucket to upload to */
-                    imageName,    /* The key for the uploaded object */
-                    fileToUpload        /* The file where the data to upload exists */
+                    imageName,               /* The key for the uploaded object */
+                    fileToUpload             /* The file where the data to upload exists */
             );
 
             httpHandler.postInfo(new PostCallback() {
@@ -202,6 +209,11 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         }
     }
 
+    /**
+     * Creates the jpg image from the camera intent
+     * @return A File type of an jpg
+     * @throws IOException Signals a general, I/O-related error
+     */
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "Olin_Scavenge_" + timeStamp + ".jpg";
