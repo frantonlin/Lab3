@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoClueFragment">
+    tools:context=".VideoClueFragment" >
 
     <VideoView
         android:id="@+id/videoView"
@@ -12,6 +12,15 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
         </VideoView>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/clueLabel"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="5dp"
+        android:layout_above="@id/videoView"/>
 
     <Button
         android:layout_width="fill_parent"

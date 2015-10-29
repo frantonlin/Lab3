@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import android.widget.GridView;
+import android.widget.VideoView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
     static final int REQUEST_TAKE_PHOTO = 1;
     private String mCurrentPhotoPath;
     private int clueNum;
-    SharedPreferences prefs;
+    private HashMap<String, String> clue;
+    private SharedPreferences prefs;
     private HTTPHandler httpHandler;
 
     @Override
@@ -68,17 +70,6 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         transaction.commit();
 
         httpHandler = new HTTPHandler(this);
-//        httpHandler.getInfo(new InfoCallback() {
-//            @Override
-//            public void callback(boolean success, HashMap<String, String> clueInfo) {
-//                if (success) {
-//                    Log.d("Success", Boolean.toString(success));
-//                    Log.d("MainActivity", String.valueOf(clueInfo));
-//                } else {
-//                    Log.d("Failure", Boolean.toString(success));
-//                }
-//            }
-//        }, 1);
 
 //        httpHandler.postInfo(new PostCallback() {
 //            @Override
@@ -121,12 +112,43 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
                 .commit();
     }
 
-    public void takePhoto(){ //TODO: FIX/GET RID OF THIS
-        Intent intent = new Intent(this, CameraActivity.class);
-        startActivity(intent);
+    public int getClueNum() {
+        return clueNum;
     }
 
-    public void dispatchTakePictureIntent(View view) {
+    public void incrementClueNum() {
+        clueNum++;
+        prefs = this.getPreferences(MODE_PRIVATE);
+        prefs.edit().putInt("clueNum", clueNum);
+        prefs.edit().apply();
+    }
+
+    public HTTPHandler getHttpHandler() {
+        return httpHandler;
+    }
+
+//    public HashMap<String, String> getClueInfo() {
+//        httpHandler.getInfo(new InfoCallback() {
+//            @Override
+//            public void callback(boolean success, HashMap<String, String> clueInfo) {
+//                if (success) {
+//                    Log.d("Success", Boolean.toString(success));
+//                    VideoClueFragment fragment = (VideoClueFragment) getFragmentManager().findFragmentById(R.id.videoView);
+//                    fragment.loadVideo("https://s3.amazonaws.com/olin-mobile-proto/" + clueInfo.get("s3id"));
+////                    clue = clueInfo;
+//                } else {
+//                    Log.d("Failure", Boolean.toString(success));
+//                }
+//            }
+//        }, clueNum);
+//        return clue;
+//    }
+
+    public void takePhoto(){ //TODO:GET RID OF THIS
+        dispatchTakePictureIntent();
+    }
+
+    public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -150,11 +172,11 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            ImageView mImageView = (ImageView) findViewById(R.id.image);
-            int nh = (int) ( imageBitmap.getHeight() * (460.0 / imageBitmap.getWidth()) );
-            Bitmap scaled = Bitmap.createScaledBitmap(imageBitmap,460,nh,true);
-            mImageView.setImageBitmap(scaled);
+//            Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+//            ImageView mImageView = (ImageView) findViewById(R.id.image);
+//            int nh = (int) ( imageBitmap.getHeight() * (460.0 / imageBitmap.getWidth()) );
+//            Bitmap scaled = Bitmap.createScaledBitmap(imageBitmap,460,nh,true);
+//            mImageView.setImageBitmap(scaled);
 
 //            AmazonS3 s3Client = new AmazonS3Client(new DefaultAWSCredentialsProviderChain());
 
@@ -176,6 +198,10 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
 //            PutObjectRequest putRequest = new PutObjectRequest("olin-mobile-proto", imageName, fileToUpload).withCannedAcl(CannedAccessControlList.PublicRead);
 //            PutObjectResult putResponse = s3Client.putObject(putRequest);
             Log.d("PHOTO URL", "https://olin-mobile-proto.s3.amazonaws.com/"+imageName);
+
+            incrementClueNum();
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.container);
+            getFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
         }
     }
 
@@ -183,9 +209,7 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         // Create an image file name
 //        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "clue_" + number + "_photo";
-//        File storageDir = Environment.getExternalStorageDirectory();
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-//        File storageDir = ContextCompat.getExternalCacheDirs();
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
