@@ -33,7 +33,7 @@ public class VideoClueFragment extends Fragment {
     public static final String TAG = VideoClueFragment.class.getSimpleName();
     public LocationManager locationManager;
     public LocationListener locationListener;
-    private double target_threshold = 0.0001; // Have to be within about 11 m of target
+    private double target_threshold = 1; // Have to be within about 11 m of target
     Location currentLoc;
     private double latitude;
     private double longitude;

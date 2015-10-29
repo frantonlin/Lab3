@@ -22,6 +22,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 import java.util.HashMap;
 
@@ -154,13 +156,25 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
             s3Client.setRegion(Region.getRegion(Regions.US_EAST_1));
             File fileToUpload = new File(mCurrentPhotoPath);
             UUID uid = UUID.fromString("6f34f25e-0b0d-4426-8ece-a8b3f27f4b63");
-            String imageName = uid.randomUUID() + ".jpg";
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageName = "Olin_Scavenge_" + timeStamp + ".jpg";
 
             TransferObserver observer = transferUtility.upload(
                     "olin-mobile-proto",     /* The bucket to upload to */
                     imageName,    /* The key for the uploaded object */
                     fileToUpload        /* The file where the data to upload exists */
             );
+
+            httpHandler.postInfo(new PostCallback() {
+                @Override
+                public void callback(boolean success) {
+                    if (success) {
+                        Log.d("Success", Boolean.toString(success));
+                    } else {
+                        Log.d("Failure", Boolean.toString(success));
+                    }
+                }
+            }, imageName, String.valueOf(clueNum));
 
             //(Replace "MY-BUCKET" with your S3 bucket name, and "MY-OBJECT-KEY" with whatever you would like to name the file in S3)
 //            PutObjectRequest putRequest = new PutObjectRequest("olin-mobile-proto", imageName, fileToUpload).withCannedAcl(CannedAccessControlList.PublicRead);
