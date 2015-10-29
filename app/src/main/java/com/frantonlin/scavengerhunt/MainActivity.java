@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
             prefs.edit().putInt("clueNum", 1);
             prefs.edit().apply();
         }
-        clueNum = 6;
 
         Fragment titlePage = new TitlePageFragment();
         Fragment instructions = new InstructionsFragment();
