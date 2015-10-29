@@ -110,6 +110,7 @@ public class VideoClueFragment extends Fragment {
                     clueLabel.setText("Clue " + clueInfo.get("id") + "/" + clueInfo.get("numClues"));
                     latitude = Double.parseDouble(clueInfo.get("latitude"));
                     longitude = Double.parseDouble(clueInfo.get("longitude"));
+                    ((MainActivity) getActivity()).setNumClues(Integer.parseInt(clueInfo.get("numClues")));
                 } else {
                     Log.d("Failure", Boolean.toString(success));
                 }
