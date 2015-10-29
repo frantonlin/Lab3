@@ -46,16 +46,17 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
 //                }
 //            }
 //        }, 1);
-        httpHandler.postInfo(new PostCallback() {
-            @Override
-            public void callback(boolean success) {
-                if (success) {
-                    Log.d("Success", Boolean.toString(success));
-                } else {
-                    Log.d("Failure", Boolean.toString(success));
-                }
-            }
-        }, "testKey", "testLocation");
+
+//        httpHandler.postInfo(new PostCallback() {
+//            @Override
+//            public void callback(boolean success) {
+//                if (success) {
+//                    Log.d("Success", Boolean.toString(success));
+//                } else {
+//                    Log.d("Failure", Boolean.toString(success));
+//                }
+//            }
+//        }, "testKey", "testLocation");
     }
 
     @Override
