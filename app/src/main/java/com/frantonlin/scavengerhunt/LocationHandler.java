@@ -17,9 +17,9 @@ public class LocationHandler {
     LocationManager locationManager;
     public static final String TAG = LocationHandler.class.getSimpleName();
 
-    public LocationHandler(Context context, final LocationCallback cb) {
+    public LocationHandler(Context context, final LocationCallback callback1) {
         locationManager = (LocationManager) context.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        callback = cb;
+        callback = callback1;
         Log.d(TAG, "callback");
         locationListener = new LocationListener()
         {

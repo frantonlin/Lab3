@@ -1,8 +1,10 @@
 package com.frantonlin.scavengerhunt;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -30,11 +32,13 @@ public class VideoClueFragment extends Fragment {
     public LocationManager locationManager;
     public LocationListener locationListener;
 
-    private double actual_latitude;
-    private double actual_longitude;
-    private double target_latitude;
-    private double target_longitude;
-    private double target_treshhold; // SET TO SOME NUMBER?
+    private double target_latitude = 42.2932;     // GOTTEN FROM DATABASE
+    private double target_longitude = -71.2628;    // GOTTEN FROM DATABASE
+    private double target_treshhold = 1;    // SET TO SOME NUMBER?
+
+    Location currentLoc;
+
+    private int clueNumber;  //WILL BE IN SHARED PREFERENCES?
 
 
 
@@ -72,11 +76,14 @@ public class VideoClueFragment extends Fragment {
             }
         });
 
-        Button checkLocationButton = (Button) view.findViewById(R.id.checkButton);
+        final Button checkLocationButton = (Button) view.findViewById(R.id.checkButton);
 
+
+        // When user clicks 'CHECK' button,
         checkLocationButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+
                 locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
                 locationListener = new LocationListener() {
                     public void onLocationChanged(Location location) {
@@ -93,10 +100,15 @@ public class VideoClueFragment extends Fragment {
                     }
                 };
                 try {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    currentLoc = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    checkLocation(currentLoc);
+                    Log.d(TAG, "GPS: Latitude: " + String.valueOf(currentLoc.getLatitude()) + ", Longitude: " + String.valueOf(currentLoc.getLongitude()));
                 } catch (SecurityException ex) {
                     Log.e("ERROR", ex.getMessage());
                 }
+
+
 
             }
         });
@@ -113,9 +125,61 @@ public class VideoClueFragment extends Fragment {
 
     public void checkLocation(Location loc)
     {
-        if (Math.abs(loc.getLatitude() -  target_latitude) < target_treshhold)
+        if (Math.abs(loc.getLatitude() -  target_latitude) < target_treshhold && (Math.abs(loc.getLongitude() - target_longitude) < target_treshhold))
         {
-            //GO TO NEXT CLUE?
+            clueNumber += 1;
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+            // set title
+            alertDialogBuilder.setTitle("CONGRATULATIONS!");
+
+            // set dialog message
+            alertDialogBuilder
+                    .setMessage("Continue to next clue?")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            // GO TO CAMERA INTENT THEN NEXT CLUE
+
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+
+        }
+        else {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+
+            // set title
+            alertDialogBuilder.setTitle("NOT QUITE CLOSE ENOUGH!");
+
+            // set dialog message
+            alertDialogBuilder
+                    .setMessage("Try Again!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // CONTINUE WITH THE SAME VIEW
+                        }
+                    });
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+
         }
     }
 
