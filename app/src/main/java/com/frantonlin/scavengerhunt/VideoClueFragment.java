@@ -15,28 +15,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.VideoView;
 import android.widget.MediaController;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by keenan on 10/13/15.
+ *
+ * Video Clue Fragment holds a lot of the meat of this lab. Includes the Location Listener that
+ * checks the phones location. Also loads the video from the URL into the view. Also contains the
+ * alert dialogs that appear when you check to see if you are within range.
  */
 
 public class VideoClueFragment extends Fragment {
 
-//    String testURL = "https://s3.amazonaws.com/olin-mobile-proto/MVI_3140.3gp";
+
     public static final String TAG = VideoClueFragment.class.getSimpleName();
     public LocationManager locationManager;
     public LocationListener locationListener;
-    private double target_threshold = 1; // Have to be within about 11 m of target
+    private double target_threshold = 0.0002; // Have to be within about 20 m of target
     Location currentLoc;
     private double latitude;
     private double longitude;
+
+//    USED FOR TESTING:
+//    String testURL = "https://s3.amazonaws.com/olin-mobile-proto/MVI_3140.3gp";
+//    double check_lat = 42.29386; //used for testing first location
+//    double check_lon = -71.26483; //used for testing first location
+
 
     public VideoClueFragment(){
 
@@ -59,12 +66,18 @@ public class VideoClueFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Sets up the button for the user to check if they are within range of the clue. Also
+     * includes the Location Listener and overrides the onLocationChanged method to log the current
+     * location of the phone.
+     * @param view The current view on the screen
+     * @param savedInstanceState the saved state in case the app is closed
+     */
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
         final Button checkLocationButton = (Button) view.findViewById(R.id.checkPos);
 
-        // When user clicks 'CHECK' button, check if they are within range by locating their GPS
         checkLocationButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -95,10 +108,13 @@ public class VideoClueFragment extends Fragment {
             }
         });
 
-        //Pares the video URL and play in the view, also include a media controller
+        // Pares the video URL and play in the view, also include a media controller
         getClueInfoWithCallback();
     }
 
+    /**
+     * Overrides a callback to set the longitude and latitude variables as well as the video url
+     */
     public void getClueInfoWithCallback() {
         ((MainActivity) getActivity()).getHttpHandler().getInfo(new InfoCallback() {
             @Override
@@ -117,6 +133,11 @@ public class VideoClueFragment extends Fragment {
         }, ((MainActivity) getActivity()).getClueNum());
     }
 
+    /**
+     * Loads the video url into the video view on the screen. Includes a media controller to do
+     * pause and play functionality
+     * @param videoUrl The url of the video from the s3 bucket
+     */
     public void loadVideo(String videoUrl) {
         Uri uri=Uri.parse(videoUrl);
         VideoView videoView = (VideoView) getActivity().findViewById(R.id.videoView);
@@ -126,10 +147,18 @@ public class VideoClueFragment extends Fragment {
         videoView.start();
     }
 
+    /**
+     * Uses the current location to check whether the phone is close enough to the destination
+     * compared to a threshold value. If the phone is close enough, an alert dialog prompts the user
+     * to take and photo and move to the next clue. If not close enough, they return to the video clue
+     * and must try again.
+     * @param loc The current location of the phone
+     */
     public void checkLocation(Location loc)
     {
         // Check for distance to the target given a specific latitude and longitude threshold of being within range
         if (Math.abs(loc.getLatitude() -  latitude) < target_threshold && (Math.abs(loc.getLongitude() - longitude) < target_threshold))
+        //if (Math.abs(check_lat -  latitude) < target_threshold && (Math.abs(check_lon - longitude) < target_threshold)) TESTING HARDCODED LOCATION
         {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
@@ -138,7 +167,7 @@ public class VideoClueFragment extends Fragment {
 
             // set dialog message
             alertDialogBuilder
-                    .setMessage("Continue to next clue?")
+                    .setMessage("Photograph and Continue?")
                     .setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {

@@ -11,6 +11,9 @@ import android.widget.Button;
 
 /**
  * Created by keenan on 10/13/15.
+ *
+ * Title Page Fragment simply holds one button to move onto the Instructions Fragment. There is an
+ * image loaded into the background.
  */
 public class TitlePageFragment extends Fragment {
 
