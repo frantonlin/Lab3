@@ -11,6 +11,9 @@ import android.widget.Button;
 
 /**
  * Created by keenan on 10/13/15.
+ *
+ * Instructions Fragment simple contains one button to move onto the Video Clue Fragment.
+ * A background image holds the information about how to play the Scavenger Hunt.
  */
 public class InstructionsFragment extends Fragment{
 

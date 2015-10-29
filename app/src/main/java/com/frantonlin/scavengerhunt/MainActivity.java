@@ -25,9 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
-
+/**
+ * Main Activity of the Scavenger Hunt app
+ *
+ */
 public class MainActivity extends AppCompatActivity implements TitlePageFragment.onInstructionsListener, InstructionsFragment.onClueListener{
 
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -51,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         }
 
         Fragment titlePage = new TitlePageFragment();
-        Fragment instructions = new InstructionsFragment();
 
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -59,17 +59,6 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         transaction.commit();
 
         httpHandler = new HTTPHandler(this);
-
-//        httpHandler.postInfo(new PostCallback() {
-//            @Override
-//            public void callback(boolean success) {
-//                if (success) {
-//                    Log.d("Success", Boolean.toString(success));
-//                } else {
-//                    Log.d("Failure", Boolean.toString(success));
-//                }
-//            }
-//        }, "testKey", "testLocation");
     }
 
     @Override
@@ -89,12 +78,18 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Switches views from the title page to the instructions page using fragment manager
+     */
     public void onInstructions(){
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, new InstructionsFragment())
                 .commit();
     }
 
+    /**
+     * Switches views from the instructions page to the video clue page using fragment manager
+     */
     public void onClue(){
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, new VideoClueFragment())
@@ -105,10 +100,15 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         return clueNum;
     }
 
+
     public void setNumClues(int numClues) {
         this.numClues = numClues;
     }
 
+
+    /**
+     * Increments the clue number and saves the changes to Shared Preferences
+     */
     public void incrementClueNum() {
         clueNum++;
         prefs = this.getPreferences(MODE_PRIVATE);
@@ -138,6 +138,9 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
         return httpHandler;
     }
 
+    /**
+     * Creates an intent to the camera, so we don't need a seperate activity
+     */
     public void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -162,14 +165,6 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-//            Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-//            ImageView mImageView = (ImageView) findViewById(R.id.image);
-//            int nh = (int) ( imageBitmap.getHeight() * (460.0 / imageBitmap.getWidth()) );
-//            Bitmap scaled = Bitmap.createScaledBitmap(imageBitmap,460,nh,true);
-//            mImageView.setImageBitmap(scaled);
-
-//            AmazonS3 s3Client = new AmazonS3Client(new DefaultAWSCredentialsProviderChain());
-
             AmazonS3 s3Client = new AmazonS3Client();
             TransferUtility transferUtility = new TransferUtility(s3Client, getApplicationContext());
 
@@ -195,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements TitlePageFragment
                 }
             }, imageName, String.valueOf(clueNum));
 
-            //(Replace "MY-BUCKET" with your S3 bucket name, and "MY-OBJECT-KEY" with whatever you would like to name the file in S3)
+//            (Replace "MY-BUCKET" with your S3 bucket name, and "MY-OBJECT-KEY" with whatever you would like to name the file in S3)
 //            PutObjectRequest putRequest = new PutObjectRequest("olin-mobile-proto", imageName, fileToUpload).withCannedAcl(CannedAccessControlList.PublicRead);
 //            PutObjectResult putResponse = s3Client.putObject(putRequest);
             Log.d("PHOTO URL", "https://olin-mobile-proto.s3.amazonaws.com/" + imageName);
