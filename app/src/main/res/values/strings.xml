@@ -5,4 +5,5 @@
     <string name="swipeToBeginButton">Let\'s Go!</string>
     <string name="titleText">Scavenger Hunt!</string>
     <string name="ready">Ready!</string>
+    <string name="checkPos">Check My Position</string>
 </resources>

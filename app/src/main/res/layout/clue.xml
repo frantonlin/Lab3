@@ -3,26 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".VideoClueFragment">
-
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="TEST"
-        android:layout_above="@+id/videoView"
-        android:id="@+id/testButton"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CHECK"
-        android:layout_below="@+id/videoView"
-        android:id="@+id/checkButton"/>
-
 
     <VideoView
         android:id="@+id/videoView"
@@ -30,6 +11,22 @@
         android:layout_centerHorizontal="true"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
-
     </VideoView>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/clueLabel"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="5dp"
+        android:layout_above="@id/videoView"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/checkPos"
+        android:layout_below="@+id/videoView"
+        android:id="@+id/checkPos"/>
+
 </RelativeLayout>

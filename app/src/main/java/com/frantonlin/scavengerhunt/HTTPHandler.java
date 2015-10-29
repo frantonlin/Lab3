@@ -27,12 +27,14 @@ public class HTTPHandler {
     public static final String APPID = "olinscavenge";
     // The request queue for Volley
     public RequestQueue queue;
+    public Context context;
 
     /**
      * Constructor
      * @param context the context of the handler
      */
     public HTTPHandler(Context context) {
+        this.context = context;
         queue = Volley.newRequestQueue(context);
     }
 

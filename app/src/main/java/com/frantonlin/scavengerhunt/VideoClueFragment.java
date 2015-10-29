@@ -15,8 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.VideoView;
 import android.widget.MediaController;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by keenan on 10/13/15.
@@ -24,19 +29,14 @@ import android.widget.MediaController;
 
 public class VideoClueFragment extends Fragment {
 
-    String testURL = "https://s3.amazonaws.com/olin-mobile-proto/MVI_3140.3gp";
-    onTakePhotoListener mTakePhotoListener;
+//    String testURL = "https://s3.amazonaws.com/olin-mobile-proto/MVI_3140.3gp";
     public static final String TAG = VideoClueFragment.class.getSimpleName();
     public LocationManager locationManager;
     public LocationListener locationListener;
-
-    private double target_latitude = 42.2932;     // GOTTEN FROM DATABASE
-    private double target_longitude = -71.2628;    // GOTTEN FROM DATABASE
-    private double target_treshhold = 1;    // SET TO SOME NUMBER?
-
+    private double target_threshold = 0.0001; // Have to be within about 11 m of target
     Location currentLoc;
-
-    private int clueNumber;  //WILL BE IN SHARED PREFERENCES?
+    private double latitude;
+    private double longitude;
 
     public VideoClueFragment(){
 
@@ -46,7 +46,6 @@ public class VideoClueFragment extends Fragment {
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        mTakePhotoListener = (onTakePhotoListener) activity;
     }
 
     @Override
@@ -63,17 +62,7 @@ public class VideoClueFragment extends Fragment {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState)
     {
-        Button takePhoto = (Button)view.findViewById(R.id.testButton);
-
-        takePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mTakePhotoListener.takePhoto();
-            }
-        });
-
-        final Button checkLocationButton = (Button) view.findViewById(R.id.checkButton);
-
+        final Button checkLocationButton = (Button) view.findViewById(R.id.checkPos);
 
         // When user clicks 'CHECK' button, check if they are within range by locating their GPS
         checkLocationButton.setOnClickListener(new View.OnClickListener(){
@@ -107,8 +96,30 @@ public class VideoClueFragment extends Fragment {
         });
 
         //Pares the video URL and play in the view, also include a media controller
-        Uri uri=Uri.parse(testURL);
-        VideoView videoView = (VideoView) view.findViewById(R.id.videoView);
+        getClueInfoWithCallback();
+    }
+
+    public void getClueInfoWithCallback() {
+        ((MainActivity) getActivity()).getHttpHandler().getInfo(new InfoCallback() {
+            @Override
+            public void callback(boolean success, HashMap<String, String> clueInfo) {
+                if (success) {
+                    Log.d("Success", Boolean.toString(success));
+                    loadVideo("https://s3.amazonaws.com/olin-mobile-proto/" + clueInfo.get("s3id"));
+                    TextView clueLabel = (TextView) getActivity().findViewById(R.id.clueLabel);
+                    clueLabel.setText("Clue " + clueInfo.get("id") + "/" + clueInfo.get("numClues"));
+                    latitude = Double.parseDouble(clueInfo.get("latitude"));
+                    longitude = Double.parseDouble(clueInfo.get("longitude"));
+                } else {
+                    Log.d("Failure", Boolean.toString(success));
+                }
+            }
+        }, ((MainActivity) getActivity()).getClueNum());
+    }
+
+    public void loadVideo(String videoUrl) {
+        Uri uri=Uri.parse(videoUrl);
+        VideoView videoView = (VideoView) getActivity().findViewById(R.id.videoView);
         MediaController controller = new MediaController(getActivity());
         videoView.setMediaController(controller);
         videoView.setVideoURI(uri);
@@ -118,9 +129,8 @@ public class VideoClueFragment extends Fragment {
     public void checkLocation(Location loc)
     {
         // Check for distance to the target given a specific latitude and longitude threshold of being within range
-        if (Math.abs(loc.getLatitude() -  target_latitude) < target_treshhold && (Math.abs(loc.getLongitude() - target_longitude) < target_treshhold))
+        if (Math.abs(loc.getLatitude() -  latitude) < target_threshold && (Math.abs(loc.getLongitude() - longitude) < target_threshold))
         {
-            clueNumber += 1;
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
 
             // set title
@@ -132,8 +142,7 @@ public class VideoClueFragment extends Fragment {
                     .setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-
-                            // GO TO CAMERA INTENT THEN NEXT CLUE
+                            ((MainActivity) getActivity()).dispatchTakePictureIntent();
                         }
                     })
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -171,12 +180,6 @@ public class VideoClueFragment extends Fragment {
             // show it
             alertDialog.show();
         }
-    }
-
-    // On Success, go to take the photo before the next clue
-    public interface onTakePhotoListener
-    {
-        public void takePhoto();
     }
 
 }
